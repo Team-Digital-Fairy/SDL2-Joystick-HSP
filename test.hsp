@@ -1,0 +1,24 @@
+#include "SDL.as"
+; DLL at https://github.com/libsdl-org/SDL/releases/tag/release-2.24.0 @ SDL2-2.24.0-win32-x86.zip 
+screen ,640,480,,
+title "SDL_Joystick"
+
+initflags = (SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK | SDL_INIT_EVENTS)
+ret = SDL_Init(initflags)
+mes ret
+
+numJoys = SDL_NumJoysticks()
+mes numJoys
+
+;sdim name_d, 1024
+
+for i,0,numJoys,1
+mes i
+ptr_joys = SDL_JoystickOpen(i)
+mes "Joy"+i+" Opened" 
+ptr_name = SDL_JoystickName(ptr_joys)
+dupptr name,ptr_name,1024,2
+mes name
+
+
+next

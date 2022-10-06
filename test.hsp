@@ -7,8 +7,21 @@ initflags = (SDL_INIT_GAMECONTROLLER | SDL_INIT_JOYSTICK | SDL_INIT_EVENTS)
 ret = SDL_Init(initflags)
 mes ret
 
+v = SDL_JoystickEventState(1)
+mes v
+
 numJoys = SDL_NumJoysticks()
 mes numJoys
+
+mes "Loading GameControllerDB.txt"
+ret = SDL_GameControllerAddMappingsFromFile("gamecontrollerdb.txt")
+if ret < 0 {
+	error = SDL_GetError()
+	error_len = SDL_strlen(error)
+	dupptr error_str,error,error_len+1,2 ; const char* to str
+	mes "Error loading GameControllerDB: error=" + error_str
+}
+mes ret
 
 ;sdim name_d, 1024
 
@@ -17,8 +30,106 @@ mes i
 ptr_joys = SDL_JoystickOpen(i)
 mes "Joy"+i+" Opened" 
 ptr_name = SDL_JoystickName(ptr_joys)
-dupptr name,ptr_name,1024,2
-mes name
-
-
+name_size = SDL_strlen(ptr_name)
+mes name_size
+dupptr name,ptr_name,name_size+1,2
+axiscount = SDL_JoystickNumAxes(ptr_joys)
+buttoncount = SDL_JoystickNumButtons(ptr_joys)
+mes "–¼‘O: "+name
+mes "Ž²‚Ì”: "+axiscount
+mes "ƒ{ƒ^ƒ“‚Ì”: "+buttoncount
+ret = SDL_JoystickClose(ptr_joys)
 next
+
+if numJoys < 1 {
+	mes "Error: No Joystick"
+	stop
+	end
+}
+
+ptr_joys = SDL_JoystickOpen(0)
+mes "Joy0 Opened"
+ptr_gc = SDL_GameControllerOpen(0)
+mes "Joy0 = GC"
+ptr_name = SDL_GameControllerName(ptr_gc)
+name_size = SDL_strlen(ptr_name)
+mes name_sie
+dupptr gc_name,ptr_name,name_size+1,2
+mes gc_name
+
+
+
+*mainsetup
+	buffer 1
+	picload "sara-cal.png"
+	gsel 0
+	
+	color 255
+
+*mainloop
+count = 0
+vc = 0
+xx = 0
+yy = 0
+;dim event_struct ,200
+repeat
+	redraw 0
+	count++
+	; Do you have an Event?
+	color 255,255,255
+	boxf 0,380,640,480
+	color 0,0,0
+	v1 = SDL_GameControllerGetButton(ptr_gc, 0) ; SDL_CONTROLLER_BUTTON_A
+	v2 = SDL_GameControllerGetButton(ptr_gc, 1)	; SDL_CONTROLLER_BUTTON_B
+	v3 = SDL_GameControllerGetButton(ptr_gc, 2)	; SDL_CONTROLLER_BUTTON_X
+	v4 = SDL_GameControllerGetButton(ptr_gc, 3) ; SDL_CONTROLLER_BUTTON_Y
+
+	up = SDL_GameControllerGetButton(ptr_gc, 11) ; SDL_CONTROLLER_BUTTON_DPAD_UP
+	dn = SDL_GameControllerGetButton(ptr_gc, 12) ; SDL_CONTROLLER_BUTTON_DPAD_DOWN
+	ll = SDL_GameControllerGetButton(ptr_gc, 13) ; SDL_CONTROLLER_BUTTON_DPAD_LEFT
+	rr = SDL_GameControllerGetButton(ptr_gc, 14) ; SDL_CONTROLLER_BUTTON_DPAD_RIGHT
+	
+	if up == 1 {
+		yy--
+	}
+	if dn == 1 {
+		yy++
+	}
+
+	if ll == 1 {
+		xx--
+	}
+	if rr == 1 {
+		xx++
+	}
+	
+	pos 0,380
+	mes count
+	mes "BtnA " + v1
+	mes "BtnB " + v2
+	mes "BtnX " + v3
+	mes "BtnY " + v4
+	; Anim
+	; wait for 30 frame and incl
+	if count >= 15 {
+		vc++
+		count = 0
+	}
+	
+	vlp = vc \ 3
+	color 255,0,255
+	gmode 4,,,256:pos xx,yy
+	gcopy 1,0+(36*vlp),72,32,48
+	color 255
+	
+	;count = count+1
+	;color 255,255,255
+	;boxf 0,320,320,240
+	;color 0,0,0
+	;v = SDL_JoystickSetLED(ptr_joys, 0,count,0)
+	;pos 0,320:mes v
+	
+	v = SDL_JoystickUpdate()
+	redraw 1
+	wait 1
+loop

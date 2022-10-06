@@ -38,7 +38,7 @@
 #cfunc SDL_GetError "SDL_GetError"
 
 ; SDL_stdinc Support
-#cfunc SDL_strlen int ; const char* ret int
+#cfunc SDL_strlen "SDL_strlen" int ; const char* ret int
 
 
 ; SDL_Joystick関連
@@ -101,5 +101,69 @@
 #cfunc SDL_JoystickClose "SDL_JoystickClose" int ; SDL_Joystick* 
 #cfunc SDL_JoystickCurrentPowerLevel "SDL_JoystickCurrentPowerLevel" int ; SDL_Joystick*
 
+; SDL_gamecontroller関連 
 
+; SDL_GameControllerType 
+;https://github.com/libsdl-org/SDL/blob/main/include/SDL_gamecontroller.h#L61
+;https://github.com/libsdl-org/SDL/blob/main/include/SDL_gamecontroller.h#L79
+
+#cfunc SDL_GameControllerAddMappingsFromRW "SDL_GameControllerAddMappingsFromRW" int, int ; SDL_RWops* freerw ret status
+#define ctype SDL_GameControllerAddMappingsFromFile(%1) SDL_GameControllerAddMappingsFromRW(SDL_RWFromFile(%1, "rb"), 1)
+#cfunc SDL_GameControllerAddMapping "SDL_GameControllerAddMapping" sptr ; mappingString(sptr) ret status
+#cfunc SDL_GameControllerNumMappings "SDL_GameControllerNumMappings" ; ret status
+#cfunc SDL_GameControllerMappingForIndex "SDL_GameControllerMappingForIndex" int ; mapping_index 
+#cfunc SDL_GameControllerMappingForGUID "SDL_GameControllerMappingForGUID" sptr ; SDL_JoystickGUID ret char*(?)
+#cfunc SDL_GameControllerMapping "SDL_GameControllerMapping" int ; SDL_GameController ret char* sptr
+#cfunc SDL_IsGameController "SDL_IsGameController" int ; joystick_index ret bool
+#cfunc SDL_GameControllerNameForIndex "SDL_GameControllerNameForIndex" int ; joystick_index ret sptr(const char*)
+#cfunc SDL_GameControllerPathForIndex "SDL_GameControllerPathForIndex" int ; joystick_index ret sptr(const char*)
+#cfunc SDL_GameControllerTypeForIndex "SDL_GameControllerTypeForIndex" int ; joystick_index retint(GameControllerType)
+#cfunc SDL_GameControllerMappingForDeviceIndex "SDL_GameControllerMappingForDeviceIndex" ; joystick_index ret char*
+#cfunc SDL_GameControllerOpen "SDL_GameControllerOpen" int ; joystick_index ret SDL_GameController*
+#cfunc SDL_GameControllerFromInstanceID "SDL_GameControllerFromInstanceID" int ; joystickID ret SDL_GameController*
+#cfunc SDL_GameControllerFromPlayerIndex "SDL_GameControllerFromPlayerIndex" int ; player_index ret SDL_GameControler*
+#cfunc SDL_GameControllerName "SDL_GameControllerName" int ; SDL_GameController* ret sptr(const char*)
+#cfunc SDL_GameControllerPath "SDL_GameControllerPath" int ;  SDL_GameController* ret sptr(const char*)
+#cfunc SDL_GameControllerGetType "SDL_GameControllerGetType" int ; SDL_GameController* ret GameControllerType
+#cfunc SDL_GameControllerGetPlayerIndex "SDL_GameControllerGetPlayerIndex" int ; SDL_GameController* ret int
+#cfunc SDL_GameControllerSetPlayerIndex "SDL_GameControllerSetPlayerIndex" int, int ; SDL_GameController*,player_index
+#cfunc SDL_GameControllerGetVendor "SDL_GameControllerGetVendor" int ; SDL_GameController* ret int(uint16)
+#cfunc SDL_GameControllerGetProduct "SDL_GameControllerGetProduct" int ; SDL_GameController* ret int(uint16)
+#cfunc SDL_GameControllerGetProductVersion "SDL_GameControllerGetProductVersion" int ; SDL_GameController ret int uint16
+#cfunc SDL_GameControllerGetFirmwareVersion "SDL_GameControllerGetFirmwareVersion" int ; SDL_GameController* ret int(uint16)
+#cfunc SDL_GameControllerGetSerial "SDL_GameControllerGetSerial" int ; SDL_GameController* ret const char*
+#cfunc SDL_GameControllerGetAttached "SDL_GameControllerGetAttached" int ; SDL_GameController* ret bool
+#cfunc SDL_GameControllerGetJoystick "SDL_GameControllerGetJoystick" int ; SDL_GameController* ret SDL_Joystick*
+#cfunc SDL_GameControllerEventState "SDL_GameControllerEventState" int ; state ret int
+#cfunc SDL_GameControllerUpdate "SDL_GameControllerUpdate" ; None; Update controller
+#cfunc SDL_GameControllerGetAxisFromString "SDL_GameControllerGetAxisFromString" sptr ; sptr ret GameControllerAxis
+#cfunc SDL_GameControllerGetStringForAxis "SDL_GameControllerGetStringForAxis" int ; GameControllerAxis ret sptr
+#cfunc SDL_GameControllerGetBindForAxis "SDL_GameControllerGetBindForAxis" int, int; SDL_GameController* axis ret SDL_GameControllerButtonBind
+#cfunc SDL_GameControllerHasAxis "SDL_GameControllerHasAxis" int, int ; SDL_GameController* SDL_GameControllerAxis
+#cfunc SDL_GameControllerGetAxis "SDL_GameControllerGetAxis" int, int ; SDL_GameController* axis return Sint16
+#cfunc SDL_GameControllerButton "SDL_GameControllerButton" sptr ; const char* ret SDL_GameControllerButton
+#cfunc SDL_GameControllerGetStringForButton "SDL_GameControllerGetStringForButton" int ; SDL_GameController ret sptr
+#cfunc SDL_GameControllerGetBindForButton "SDL_GameControllerGetBindForButton" int, int ; SDL_GameController* Button ret SDL_GameControllerButtonBind
+#cfunc SDL_GameControllerHasButton "SDL_GameControllerHasButton" int, int ; SDL_GameController* Button ret bool
+#cfunc SDL_GameControllerGetButton "SDL_GameControllerGetButton" int, int ; SDL_GameController* Button ret int(U8)
+#cfunc SDL_GameControllerGetNumTouchpads "SDL_GameControllerGetNumTouchpads" int ; SDL_GameController* ret int
+#cfunc SDL_GameControllerGetNumTouchpadFingers "SDL_GameControllerGetNumTouchpadFingers" int, int ; SDL_GameController* touchpad ret int
+#cfunc SDL_GameControllerGetTouchpadFinger "SDL_GameControllerGetTouchpadFinger" int, int, int, ptr, ptr, ptr, ptr ; SDL_GameController* touchpad, finger, f *state, f *x, f *y , f *pressure ret int
+#cfunc SDL_GameControllerHasSensor "SDL_GameControllerHasSensor" int, int ; SDL_GameController*, SDL_SensorType type ret bool
+#cfunc SDL_GameControllerSetSensorEnabled "SDL_GameControllerSetSensorEnabled" ; SDL_GameController*, SDL_SensorType type, bool enabled ret int
+#cfunc SDL_GameControllerIsSensorEnabled "SDL_GameControllerIsSensorEnabled" ; SDL_GameController*, SDL_SensorType type ret bool
+#cfunc SDL_GameControllerGetSensorDataRate "SDL_GameControllerGetSensorDataRate" int, int ; SDL_GameController*, type ret float (double?)
+#cfunc SDL_GameControllerGetSensorData "SDL_GameControllerGetSensorData" int, int, ptr, int ; SDL_GameController*, SDL_SensorType type, f *data, int num_values
+#cfunc SDL_GameControllerRumble "SDL_GameControllerRumble" int, int, int, int ; SDL_GameController *gamecontroller, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble, Uint32 duration_ms
+#cfunc SDL_GameControllerRumbleTriggers "SDL_GameControllerRumbleTriggers" int, int, int , int ; SDL_GameController *gamecontroller, Uint16 left_rumble, Uint16 right_rumble, Uint32 duration_ms
+#cfunc SDL_GameControllerHasLED "SDL_GameControllerHasLED" int ; SDL_GameController*
+#cfunc SDL_GameControllerHasRumbleTriggers "SDL_GameControllerHasRumbleTriggers" int ; SDL_GameController*
+#cfunc SDL_GameControllerSetLED "SDL_GameControllerSetLED" int, int, int, int ; SDL_GameController* red green blue
+#cfunc SDL_GameControllerSendEffect "SDL_GameControllerSendEffect" int, ptr, int ; (SDL_GameController *gamecontroller, const void *data, int size
+#cfunc SDL_GameControllerClose "SDL_GameControllerClose" int ; SDL_GameController*
+#cfunc SDL_GameControllerGetAppleSFSymbolsNameForButton "SDL_GameControllerGetAppleSFSymbolsNameForButton" ; SDL_GameController *gamecontroller, SDL_GameControllerButton button ret const char*
+#cfunc SDL_GameControllerGetAppleSFSymbolsNameForAxis "SDL_GameControllerGetAppleSFSymbolsNameForAxis" ; SDL_GameController *gamecontroller, SDL_GameControllerAxis axis ret const char*
 #endif
+
+; TODO: Eventをサポートする (HSPのポインタ事情が分からない)
+; TODO: 64bitのcallもサポートする。HSPInt64.dllとかに依存したい。

@@ -63,6 +63,8 @@ mes gc_name
 	buffer 1
 	picload "sara-cal.png"
 	gsel 0
+
+	screen 2,640,480,0
 	
 	color 255
 
@@ -77,7 +79,7 @@ repeat
 	count++
 	; Do you have an Event?
 	color 255,255,255
-	boxf 0,380,640,480
+	boxf 0,0,640,480
 	color 0,0,0
 	v1 = SDL_GameControllerGetButton(ptr_gc, 0) ; SDL_CONTROLLER_BUTTON_A
 	v2 = SDL_GameControllerGetButton(ptr_gc, 1)	; SDL_CONTROLLER_BUTTON_B
@@ -103,7 +105,7 @@ repeat
 		xx++
 	}
 	
-	pos 0,380
+	pos 0,0
 	mes count
 	mes "BtnA " + v1
 	mes "BtnB " + v2
